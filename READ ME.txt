@@ -1,0 +1,9 @@
+Conecta 4 - Smart Computer Player
+Author: Universidad de Alicante
+Jugador Maquina Developer: Matthew Quintana
+
+This program creates a "smart" machine player that determines the best move
+to make based on possible moves available. By default, the algorithm can 
+search down to two moves ahead, analyzing the piece placements to determine 
+which move is the best to make. 
+
