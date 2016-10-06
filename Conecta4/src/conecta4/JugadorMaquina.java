@@ -67,32 +67,319 @@ public class JugadorMaquina extends Jugador{
         public Tablero obtenerTablero(){
             return n_tablero;
         }
+
         //Put the evaluate node function inside the node so that it can use 
         /* its own private table to do the evaluation. */        
         public int valorarNodo(){
             
             int valorNodo = 0; 
-            int rowOffset = 1;
-            int colOffset = 1;
+            int numOpponent = 0;
+            int numSelf = 0;
+            int rowOffset;
+            int colOffset;
+            int diagonalOffset;
+            int valorCasilla;
             
-            while (rowOffset < 4 && n_colPos + colOffset < n_tablero.numColumnas()){
-                int valorCasilla = n_tablero.obtenerCasilla(n_rowPos, n_colPos + colOffset);
-                
-                if (valorCasilla == n_jugador){
-                    valorNodo += 1;
+            // Check right horizontal
+            for (colOffset = 1; colOffset < 4 && n_colPos + colOffset < n_tablero.numColumnas(); colOffset++){
+                valorCasilla = n_tablero.obtenerCasilla(n_rowPos, n_colPos + colOffset);
+                if (valorCasilla != n_jugador && valorCasilla != 0){
+                    numOpponent += 1;
                 }
-                else if (valorCasilla == 0){
-                    valorNodo += 0;
+                else if (valorCasilla == n_jugador){
+                    numSelf += 1;
                 }
                 else{
-                    valorNodo -= 1;
+                    //do nothing;
                 }
                 
+                if (numOpponent >= 3){
+                    return -10;
+                }
+                if (numSelf >= 3){
+                    return 10;
+                }
             }
             
-            return 0;
+            numOpponent = 0;
+            numSelf = 0;
+            
+            // Check left horizontal
+            for (colOffset = -1; colOffset > -4 && (n_colPos + colOffset) > 0; colOffset--){
+                valorCasilla = n_tablero.obtenerCasilla(n_rowPos, n_colPos + colOffset);
+                if (valorCasilla != n_jugador && valorCasilla != 0){
+                    numOpponent += 1;
+                }
+                else if (valorCasilla == n_jugador){
+                    numSelf += 1;
+                }
+                else{
+                    //do nothing;
+                }
+                
+                if (numOpponent >= 3){
+                    return -10;
+                }
+                if (numSelf >= 3){
+                    return 10;
+                }
+            }
+            
+            numOpponent = 0;
+            numSelf = 0;
+            
+            // Check for lower vertical
+            for (rowOffset = 1; rowOffset < 4 && (n_rowPos + rowOffset) < n_tablero.numFilas(); rowOffset++){
+                valorCasilla = n_tablero.obtenerCasilla(n_rowPos + rowOffset, n_colPos);
+                if (valorCasilla != n_jugador && valorCasilla != 0){
+                    numOpponent += 1;
+                }
+                else if (valorCasilla == n_jugador){
+                    numSelf += 1;
+                }
+                else{
+                    //do nothing;
+                }
+                
+                if (numOpponent >= 3){
+                    return -10;
+                }
+                if (numSelf >= 3){
+                    return 10;
+                }
+            }
+            
+            numOpponent = 0;
+            numSelf = 0;
+            // Check for higher vertical
+            for (rowOffset = -1; rowOffset > -4 && (n_rowPos + rowOffset) > 0; rowOffset--){
+                valorCasilla = n_tablero.obtenerCasilla(n_rowPos + rowOffset, n_colPos);
+                if (valorCasilla != n_jugador && valorCasilla != 0){
+                    numOpponent += 1;
+                }
+                else if (valorCasilla == n_jugador){
+                    numSelf += 1;
+                }
+                else{
+                    //do nothing;
+                }
+                
+                if (numOpponent >= 3){
+                    return -10;
+                }
+                if (numSelf >= 3){
+                    return 10;
+                }                
+            }
+            
+            numOpponent = 0;
+            numSelf = 0;
+            
+            // Check upper left diagonal
+            for (diagonalOffset = -1; (diagonalOffset > -4) && 
+                    (n_rowPos + diagonalOffset > 0) && 
+                    (n_colPos + diagonalOffset > 0); 
+                    diagonalOffset--){
+            
+                valorCasilla = n_tablero.obtenerCasilla(n_rowPos + diagonalOffset, n_colPos + diagonalOffset);
+                if (valorCasilla != n_jugador && valorCasilla != 0){
+                    numOpponent += 1;
+                }
+                else if (valorCasilla == n_jugador){
+                    numSelf += 1;
+                }
+                else{
+                    //do nothing;
+                }
+                
+                if (numOpponent >= 3){
+                    return -10;
+                }
+                if (numSelf >= 3){
+                    return 10;
+                }                
+            }
+            
+            numOpponent = 0;
+            numSelf = 0;
+            
+            // Check lower right diagonal
+            for (diagonalOffset = 1; (diagonalOffset < 4) && 
+                    (n_rowPos + diagonalOffset < n_tablero.numFilas()) && 
+                    (n_colPos + diagonalOffset < n_tablero.numColumnas()); 
+                    diagonalOffset++){
+            
+                valorCasilla = n_tablero.obtenerCasilla(n_rowPos + diagonalOffset, n_colPos + diagonalOffset);
+                if (valorCasilla != n_jugador && valorCasilla != 0){
+                    numOpponent += 1;
+                }
+                else if (valorCasilla == n_jugador){
+                    numSelf += 1;
+                }
+                else{
+                    //do nothing;
+                }
+                
+                if (numOpponent >= 3){
+                    return -10;
+                }
+                if (numSelf >= 3){
+                    return 10;
+                }                
+            }
+            numOpponent = 0;
+            numSelf = 0;
+            
+            // Upper right diagonal
+            for (diagonalOffset = 1; (diagonalOffset < 4) && 
+                    (n_rowPos - diagonalOffset > 0) &&
+                    (n_colPos + diagonalOffset < n_tablero.numColumnas());
+                    diagonalOffset++){
+                
+                valorCasilla = n_tablero.obtenerCasilla(n_rowPos - diagonalOffset, n_colPos + diagonalOffset);
+                if (valorCasilla != n_jugador && valorCasilla != 0){
+                    numOpponent += 1;
+                }
+                else if (valorCasilla == n_jugador){
+                    numSelf += 1;
+                }
+                else{
+                    //do nothing;
+                }
+                
+                if (numOpponent >= 3){
+                    return -10;
+                }
+                if (numSelf >= 3){
+                    return 10;
+                }
+            }
+            
+            numOpponent = 0;
+            numSelf = 0;
+            
+            // Lower left diagonal
+            for (diagonalOffset = 1; (diagonalOffset < 4) &&
+                    (n_rowPos + diagonalOffset < n_tablero.numFilas() &&
+                    (n_colPos - diagonalOffset > 0));
+                    diagonalOffset++){
+                
+                valorCasilla = n_tablero.obtenerCasilla(n_rowPos + diagonalOffset, n_colPos - diagonalOffset);
+                if (valorCasilla != n_jugador && valorCasilla != 0){
+                    numOpponent += 1;
+                }
+                else if (valorCasilla == n_jugador){
+                    numSelf += 1;
+                }
+                else{
+                    //do nothing;
+                }
+                
+                if (numOpponent >= 3){
+                    return -10;
+                }
+                if (numSelf >= 3){
+                    return 10;
+                }                
+            }
+            
+            // Check row above the piece
+            if (n_rowPos - 1 > 0){
+                
+                // Space above the piece
+                valorCasilla = n_tablero.obtenerCasilla(n_rowPos - 1, n_colPos);
+                if ((valorCasilla != n_jugador) && (valorCasilla != 0)){
+                    valorNodo -= 1;
+                } 
+                else if (valorCasilla == n_jugador){
+                    valorNodo += 1;
+                }
+                
+                // Upper Left
+                if (n_colPos - 1 > 0){
+                    valorCasilla = n_tablero.obtenerCasilla(n_rowPos - 1, n_colPos - 1);
+                    if ((valorCasilla != n_jugador) && (valorCasilla != 0)){
+                        valorNodo -= 1;
+                    } 
+                    else if (valorCasilla == n_jugador){
+                        valorNodo += 1;
+                    }
+                    
+                }
+                
+                // Upper right
+                if (n_colPos + 1 < n_tablero.numColumnas()){
+                    valorCasilla = n_tablero.obtenerCasilla(n_rowPos - 1, n_colPos + 1);
+                    if ((valorCasilla != n_jugador) && (valorCasilla != 0)){
+                        valorNodo -= 1;
+                    } 
+                    else if (valorCasilla == n_jugador){
+                        valorNodo += 1;
+                    }
+                }
+            }// End row above check
+            
+            
+            // Check row below
+            if (n_rowPos + 1 < n_tablero.numFilas()){
+                
+                // Check space below
+                valorCasilla = n_tablero.obtenerCasilla(n_rowPos + 1, n_colPos);
+                if ((valorCasilla != n_jugador) && (valorCasilla != 0)){
+                    valorNodo -= 1;
+                } 
+                else if (valorCasilla == n_jugador){
+                    valorNodo += 1;
+                }
+                
+                // Check the lower left
+                if (n_colPos - 1 > 0){
+                    valorCasilla = n_tablero.obtenerCasilla(n_rowPos + 1, n_colPos - 1);
+                    if ((valorCasilla != n_jugador) && (valorCasilla != 0)){
+                        valorNodo -= 1;
+                    } 
+                    else if (valorCasilla == n_jugador){
+                        valorNodo += 1;
+                    }
+                }
+                
+                // Check the lower right                
+                if (n_colPos + 1 < n_tablero.numColumnas()){
+                    valorCasilla = n_tablero.obtenerCasilla(n_rowPos + 1, n_colPos + 1);
+                    if ((valorCasilla != n_jugador) && (valorCasilla != 0)){
+                        valorNodo -= 1;
+                    } 
+                    else if (valorCasilla == n_jugador){
+                        valorNodo += 1;
+                    }                    
+                }                
+            }// End of checking row below
+            
+            // Check space to the left
+            if (n_colPos - 1 > 0){
+                valorCasilla = n_tablero.obtenerCasilla(n_rowPos, n_colPos - 1);
+                if ((valorCasilla != n_jugador) && (valorCasilla != 0)){
+                    valorNodo -= 1;
+                } 
+                else if (valorCasilla == n_jugador){
+                    valorNodo += 1;
+                }               
+            }
+            
+            // Check the space to the right
+            if (n_colPos + 1 < n_tablero.numColumnas()){
+                valorCasilla = n_tablero.obtenerCasilla(n_rowPos, n_colPos + 1);
+                if ((valorCasilla != n_jugador) && (valorCasilla != 0)){
+                    valorNodo -= 1;
+                } 
+                else if (valorCasilla == n_jugador){
+                    valorNodo += 1;
+                }
+            }
+            
+            System.out.println(valorNodo);
+            return valorNodo;
         }
-
     }
     
 
@@ -107,7 +394,9 @@ public class JugadorMaquina extends Jugador{
     public void run()
     {
         //Llama a la funciÃ³n Minimax que implementa el algoritmo para calcular la jugada
-        minimax();
+        //minimax();
+        
+        minimax_2(root);
         // Call this with the nivel por defecto and then decrement in each call. 
         
         //No borrar esta lÃ­nea!!
@@ -211,6 +500,8 @@ public class JugadorMaquina extends Jugador{
                     if (valorActual > max){
                         max = valorActual;
                         max_pos = i;
+                        m_columna = max_pos;
+                        
                     }
                 }
                 
@@ -232,6 +523,7 @@ public class JugadorMaquina extends Jugador{
                     if (valorActual < min){
                         min = valorActual;
                         min_pos = i;
+                        m_columna = min_pos;
                     }
                 }
                 
