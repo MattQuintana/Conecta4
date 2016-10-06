@@ -31,6 +31,22 @@ public class JugadorMaquina extends Jugador{
             n_nivel = nivel;
 
         }
+        
+        private void fijarCol(int colPos){
+            n_colPos = colPos;
+        }
+        
+        private void fijarFila(int rowPos){
+            n_rowPos = rowPos;
+        }
+        
+        public int obtenerCol(){
+            return n_colPos;
+        }
+        
+        public int obtenerFila(){
+            return n_rowPos;
+        }
 
         public int obtenerNivel(){
             return n_nivel;
@@ -54,6 +70,25 @@ public class JugadorMaquina extends Jugador{
         //Put the evaluate node function inside the node so that it can use 
         /* its own private table to do the evaluation. */        
         public int valorarNodo(){
+            
+            int valorNodo = 0; 
+            int rowOffset = 1;
+            int colOffset = 1;
+            
+            while (rowOffset < 4 && n_colPos + colOffset < n_tablero.numColumnas()){
+                int valorCasilla = n_tablero.obtenerCasilla(n_rowPos, n_colPos + colOffset);
+                
+                if (valorCasilla == n_jugador){
+                    valorNodo += 1;
+                }
+                else if (valorCasilla == 0){
+                    valorNodo += 0;
+                }
+                else{
+                    valorNodo -= 1;
+                }
+                
+            }
             
             return 0;
         }
@@ -109,7 +144,7 @@ public class JugadorMaquina extends Jugador{
         }
      }
     
-    public void minimax_2(Nodo n){
+    public int minimax_2(Nodo n){
         // Create a vector of nodes for all of the possible moves
         Nodo listaNodo[] = new Nodo[m_tablero.numColumnas()];
         // Create a vector to contain all of the returned values
@@ -118,13 +153,16 @@ public class JugadorMaquina extends Jugador{
         // Make sure to grab a copy of the table from the node passed in.
         Tablero nueva_copia = new Tablero(n.obtenerTablero());
         
+        
         // If the table is full, then we have reached an end state
         // Similarly if we have reached the desired depth level. 
-        if (nueva_copia.tableroLleno() == true || n.obtenerNivel() == 1){
+        if (nueva_copia.tableroLleno() == true || n.obtenerNivel() <= 0){
             // evaluate the final node and return its value
+            return n.valorarNodo();
         }
         else{
             // Otherwise for every column of the table 
+            // Generate all of the children
             for (int i = 0; i < nueva_copia.numColumnas(); i++){
                 // Check each column for an empty row
                 int fila = n.obtenerTablero().comprobarColumna(i);
@@ -134,14 +172,71 @@ public class JugadorMaquina extends Jugador{
                 }
                 // If not, create a new node
                 else{
-                    if (n.obtenerNodoTipo() == "MAX"){
-                       listaNodo[i] = new Nodo(nueva_copia, "MIN", n.obtenerJugador(), n.obtenerNivel() - 1);
+                    // The next level has to be opposite the parent level
+                    // I.E. If the parent is max, the children must be min and vice versa
+                    if (n.obtenerNodoTipo().matches("MAX")){
+                        // Create the node
+                        listaNodo[i] = new Nodo(nueva_copia, "MIN", n.obtenerJugador(), n.obtenerNivel() - 1);
+                        listaNodo[i].fijarCol(i);
+                        listaNodo[i].fijarFila(fila);
+                        listaNodo[i].obtenerTablero().ponerFicha(listaNodo[i].obtenerCol(), listaNodo[i].obtenerJugador());
+                        // Set the column position and row position
+                        // Place the piece in the table
+                        
                     }
-                    else if (n.obtenerNodoTipo() == "MIN"){
+                    else if (n.obtenerNodoTipo().matches("MIN")){
                         listaNodo[i] = new Nodo(nueva_copia, "MAX", n.obtenerJugador(), n.obtenerNivel() - 1);
+                        listaNodo[i].fijarCol(i);
+                        listaNodo[i].fijarFila(fila);
+                        listaNodo[i].obtenerTablero().ponerFicha(listaNodo[i].obtenerCol(), listaNodo[i].obtenerJugador());
+                    }
+                }// fin sino
+            }//fin para
+            
+            if (n.obtenerNodoTipo().matches("MAX")){
+                // Find the max value from the nodes in the list. 
+                // Busca el valor maximo de los nodos en la lista
+                // Initializar los variables
+                int max = 0;
+                int max_pos = 0;
+                int valorActual = 0;
+                
+                for (int i = 0; i < listaNodo.length; i++){
+                    // Make the recursive call to evaluate the nodes. 
+                    // Hacer la recursion 
+                    valorActual = minimax_2(listaNodo[i]);
+                    
+                    // Set the maximum value higher if one is found
+                    // Cambia el valor de max si encuentras un mayor
+                    if (valorActual > max){
+                        max = valorActual;
+                        max_pos = i;
                     }
                 }
-            } 
+                
+                return max;
+            }// Fin Si
+            else{
+                // Find the minimum value from the nodes in the list
+                // Initializar los variables
+                int min = 0;
+                int min_pos = 0;
+                int valorActual = 0;
+                
+                for (int i = 0; i < listaNodo.length; i++){
+                    // Make the recursive call to get the value
+                    valorActual = minimax_2(listaNodo[i]);
+                    
+                    // Set the minimum value lower if one is found
+                    // Cambiar el valor de min si encontras un menor
+                    if (valorActual < min){
+                        min = valorActual;
+                        min_pos = i;
+                    }
+                }
+                
+                return min;
+            }// fin Else
         }
     }
     
