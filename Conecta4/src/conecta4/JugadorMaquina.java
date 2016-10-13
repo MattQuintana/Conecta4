@@ -13,7 +13,7 @@ public class JugadorMaquina extends Jugador{
 
     //Profundidad hasta la que se va a desarrollar el Ã¡rbol de juego
     public final static int NIVEL_DEFECTO = 2;
-    private Nodo root;
+    public Nodo root;
     
     class Nodo{
         private Tablero n_tablero;
@@ -72,7 +72,11 @@ public class JugadorMaquina extends Jugador{
         /* its own private table to do the evaluation. */        
         public int valorarNodo(){
             
-            int valorNodo = 0; 
+            //int valorNodo= 0;
+            
+            int valorNodoMin = 0;
+            int valorNodoMax = 0;
+            
             int numOpponent = 0;
             int numSelf = 0;
             int rowOffset;
@@ -105,7 +109,7 @@ public class JugadorMaquina extends Jugador{
             numSelf = 0;
             
             // Check left horizontal
-            for (colOffset = -1; colOffset > -4 && (n_colPos + colOffset) > 0; colOffset--){
+            for (colOffset = -1; colOffset > -4 && (n_colPos + colOffset) > -1; colOffset--){
                 valorCasilla = n_tablero.obtenerCasilla(n_rowPos, n_colPos + colOffset);
                 if (valorCasilla != n_jugador && valorCasilla != 0){
                     numOpponent += 1;
@@ -152,7 +156,7 @@ public class JugadorMaquina extends Jugador{
             numOpponent = 0;
             numSelf = 0;
             // Check for higher vertical
-            for (rowOffset = -1; rowOffset > -4 && (n_rowPos + rowOffset) > 0; rowOffset--){
+            for (rowOffset = -1; rowOffset > -4 && (n_rowPos + rowOffset) > -1; rowOffset--){
                 valorCasilla = n_tablero.obtenerCasilla(n_rowPos + rowOffset, n_colPos);
                 if (valorCasilla != n_jugador && valorCasilla != 0){
                     numOpponent += 1;
@@ -177,8 +181,8 @@ public class JugadorMaquina extends Jugador{
             
             // Check upper left diagonal
             for (diagonalOffset = -1; (diagonalOffset > -4) && 
-                    (n_rowPos + diagonalOffset > 0) && 
-                    (n_colPos + diagonalOffset > 0); 
+                    (n_rowPos + diagonalOffset > -1) && 
+                    (n_colPos + diagonalOffset > -1); 
                     diagonalOffset--){
             
                 valorCasilla = n_tablero.obtenerCasilla(n_rowPos + diagonalOffset, n_colPos + diagonalOffset);
@@ -232,7 +236,7 @@ public class JugadorMaquina extends Jugador{
             
             // Upper right diagonal
             for (diagonalOffset = 1; (diagonalOffset < 4) && 
-                    (n_rowPos - diagonalOffset > 0) &&
+                    (n_rowPos - diagonalOffset > -1) &&
                     (n_colPos + diagonalOffset < n_tablero.numColumnas());
                     diagonalOffset++){
                 
@@ -261,7 +265,7 @@ public class JugadorMaquina extends Jugador{
             // Lower left diagonal
             for (diagonalOffset = 1; (diagonalOffset < 4) &&
                     (n_rowPos + diagonalOffset < n_tablero.numFilas() &&
-                    (n_colPos - diagonalOffset > 0));
+                    (n_colPos - diagonalOffset > -1));
                     diagonalOffset++){
                 
                 valorCasilla = n_tablero.obtenerCasilla(n_rowPos + diagonalOffset, n_colPos - diagonalOffset);
@@ -284,25 +288,25 @@ public class JugadorMaquina extends Jugador{
             }
             
             // Check row above the piece
-            if (n_rowPos - 1 > 0){
+            if (n_rowPos - 1 > -1){
                 
                 // Space above the piece
                 valorCasilla = n_tablero.obtenerCasilla(n_rowPos - 1, n_colPos);
                 if ((valorCasilla != n_jugador) && (valorCasilla != 0)){
-                    valorNodo -= 1;
+                    valorNodoMin -= 1;
                 } 
                 else if (valorCasilla == n_jugador){
-                    valorNodo += 1;
+                    valorNodoMax += 1;
                 }
                 
                 // Upper Left
-                if (n_colPos - 1 > 0){
+                if (n_colPos - 1 > -1){
                     valorCasilla = n_tablero.obtenerCasilla(n_rowPos - 1, n_colPos - 1);
                     if ((valorCasilla != n_jugador) && (valorCasilla != 0)){
-                        valorNodo -= 1;
+                        valorNodoMin -= 1;
                     } 
                     else if (valorCasilla == n_jugador){
-                        valorNodo += 1;
+                        valorNodoMax += 1;
                     }
                     
                 }
@@ -311,10 +315,10 @@ public class JugadorMaquina extends Jugador{
                 if (n_colPos + 1 < n_tablero.numColumnas()){
                     valorCasilla = n_tablero.obtenerCasilla(n_rowPos - 1, n_colPos + 1);
                     if ((valorCasilla != n_jugador) && (valorCasilla != 0)){
-                        valorNodo -= 1;
+                        valorNodoMin -= 1;
                     } 
                     else if (valorCasilla == n_jugador){
-                        valorNodo += 1;
+                        valorNodoMax += 1;
                     }
                 }
             }// End row above check
@@ -326,20 +330,20 @@ public class JugadorMaquina extends Jugador{
                 // Check space below
                 valorCasilla = n_tablero.obtenerCasilla(n_rowPos + 1, n_colPos);
                 if ((valorCasilla != n_jugador) && (valorCasilla != 0)){
-                    valorNodo -= 1;
+                    valorNodoMin -= 1;
                 } 
                 else if (valorCasilla == n_jugador){
-                    valorNodo += 1;
+                    valorNodoMax += 1;
                 }
                 
                 // Check the lower left
-                if (n_colPos - 1 > 0){
+                if (n_colPos - 1 > -1){
                     valorCasilla = n_tablero.obtenerCasilla(n_rowPos + 1, n_colPos - 1);
                     if ((valorCasilla != n_jugador) && (valorCasilla != 0)){
-                        valorNodo -= 1;
+                        valorNodoMin -= 1;
                     } 
                     else if (valorCasilla == n_jugador){
-                        valorNodo += 1;
+                        valorNodoMax += 1;
                     }
                 }
                 
@@ -347,22 +351,22 @@ public class JugadorMaquina extends Jugador{
                 if (n_colPos + 1 < n_tablero.numColumnas()){
                     valorCasilla = n_tablero.obtenerCasilla(n_rowPos + 1, n_colPos + 1);
                     if ((valorCasilla != n_jugador) && (valorCasilla != 0)){
-                        valorNodo -= 1;
+                        valorNodoMin -= 1;
                     } 
                     else if (valorCasilla == n_jugador){
-                        valorNodo += 1;
+                        valorNodoMax += 1;
                     }                    
                 }                
             }// End of checking row below
             
             // Check space to the left
-            if (n_colPos - 1 > 0){
+            if (n_colPos - 1 > -1){
                 valorCasilla = n_tablero.obtenerCasilla(n_rowPos, n_colPos - 1);
                 if ((valorCasilla != n_jugador) && (valorCasilla != 0)){
-                    valorNodo -= 1;
+                    valorNodoMin -= 1;
                 } 
                 else if (valorCasilla == n_jugador){
-                    valorNodo += 1;
+                    valorNodoMax += 1;
                 }               
             }
             
@@ -370,15 +374,22 @@ public class JugadorMaquina extends Jugador{
             if (n_colPos + 1 < n_tablero.numColumnas()){
                 valorCasilla = n_tablero.obtenerCasilla(n_rowPos, n_colPos + 1);
                 if ((valorCasilla != n_jugador) && (valorCasilla != 0)){
-                    valorNodo -= 1;
+                    valorNodoMin -= 1;
                 } 
                 else if (valorCasilla == n_jugador){
-                    valorNodo += 1;
+                    valorNodoMax += 1;
                 }
             }
             
-            System.out.println(valorNodo);
-            return valorNodo;
+            if ((valorNodoMin * -1) > valorNodoMax){
+                return valorNodoMin;
+            }
+            else{
+                return valorNodoMax;
+            }
+            
+            
+            //return valorNodo;
         }
     }
     
@@ -387,16 +398,17 @@ public class JugadorMaquina extends Jugador{
     public JugadorMaquina(int jugador)
     {
         super(jugador);
-        root = new Nodo(m_tablero, "MAX", jugador, NIVEL_DEFECTO);
+        
     }
 
     // FunciÃ³n que se ejecuta en el thread
     public void run()
     {
+        root = new Nodo(m_tablero, "MAX", m_jugador, NIVEL_DEFECTO);
         //Llama a la funciÃ³n Minimax que implementa el algoritmo para calcular la jugada
         //minimax();
         
-        minimax_2(root);
+        minimax(root);
         // Call this with the nivel por defecto and then decrement in each call. 
         
         //No borrar esta lÃ­nea!!
@@ -433,11 +445,11 @@ public class JugadorMaquina extends Jugador{
         }
      }
     
-    public int minimax_2(Nodo n){
+    public int minimax(Nodo n){
         // Create a vector of nodes for all of the possible moves
-        Nodo listaNodo[] = new Nodo[m_tablero.numColumnas()];
+        Nodo listaNodo[] = new Nodo[n.obtenerTablero().numColumnas()];
         // Create a vector to contain all of the returned values
-        int listaValor[] = new int[m_tablero.numColumnas()];
+        int listaValor[] = new int[n.obtenerTablero().numColumnas()];
         // Create a copy of the table to be used in the recursion
         // Make sure to grab a copy of the table from the node passed in.
         Tablero nueva_copia = new Tablero(n.obtenerTablero());
@@ -457,15 +469,19 @@ public class JugadorMaquina extends Jugador{
                 int fila = n.obtenerTablero().comprobarColumna(i);
                 // If the column is full
                 if (fila == -1){
+                    return 0;
+                    //Tablero hijo_tablero = new Tablero(nueva_copia);
                     // don't know yet
                 }
                 // If not, create a new node
                 else{
                     // The next level has to be opposite the parent level
                     // I.E. If the parent is max, the children must be min and vice versa
+                    Tablero hijo_tablero = new Tablero(nueva_copia);
                     if (n.obtenerNodoTipo().matches("MAX")){
                         // Create the node
-                        listaNodo[i] = new Nodo(nueva_copia, "MIN", n.obtenerJugador(), n.obtenerNivel() - 1);
+                        
+                        listaNodo[i] = new Nodo(hijo_tablero, "MIN", n.obtenerJugador(), n.obtenerNivel() - 1);
                         listaNodo[i].fijarCol(i);
                         listaNodo[i].fijarFila(fila);
                         listaNodo[i].obtenerTablero().ponerFicha(listaNodo[i].obtenerCol(), listaNodo[i].obtenerJugador());
@@ -474,7 +490,7 @@ public class JugadorMaquina extends Jugador{
                         
                     }
                     else if (n.obtenerNodoTipo().matches("MIN")){
-                        listaNodo[i] = new Nodo(nueva_copia, "MAX", n.obtenerJugador(), n.obtenerNivel() - 1);
+                        listaNodo[i] = new Nodo(hijo_tablero, "MAX", n.obtenerJugador(), n.obtenerNivel() - 1);
                         listaNodo[i].fijarCol(i);
                         listaNodo[i].fijarFila(fila);
                         listaNodo[i].obtenerTablero().ponerFicha(listaNodo[i].obtenerCol(), listaNodo[i].obtenerJugador());
@@ -493,7 +509,7 @@ public class JugadorMaquina extends Jugador{
                 for (int i = 0; i < listaNodo.length; i++){
                     // Make the recursive call to evaluate the nodes. 
                     // Hacer la recursion 
-                    valorActual = minimax_2(listaNodo[i]);
+                    valorActual = minimax(listaNodo[i]);
                     
                     // Set the maximum value higher if one is found
                     // Cambia el valor de max si encuentras un mayor
@@ -516,7 +532,7 @@ public class JugadorMaquina extends Jugador{
                 
                 for (int i = 0; i < listaNodo.length; i++){
                     // Make the recursive call to get the value
-                    valorActual = minimax_2(listaNodo[i]);
+                    valorActual = minimax(listaNodo[i]);
                     
                     // Set the minimum value lower if one is found
                     // Cambiar el valor de min si encontras un menor
