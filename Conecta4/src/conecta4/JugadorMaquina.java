@@ -13,16 +13,16 @@ public class JugadorMaquina extends Jugador{
 
     //Profundidad hasta la que se va a desarrollar el Ã¡rbol de juego
     public final static int NIVEL_DEFECTO = 2;
-    public Nodo root;
+    private Nodo root;
     
     class Nodo{
-        private Tablero n_tablero;
-        private String n_tipo;
-        private int n_jugador;
+        private final Tablero n_tablero;
+        private final String n_tipo;
+        private final int n_jugador;
         private int n_valor;
         private int n_colPos;
         private int n_rowPos;
-        private int n_nivel;
+        private final int n_nivel;
 
         public Nodo(Tablero tablero, String tipo, int jugador, int nivel){
             n_tablero = tablero;
@@ -68,11 +68,8 @@ public class JugadorMaquina extends Jugador{
             return n_tablero;
         }
 
-        //Put the evaluate node function inside the node so that it can use 
-        /* its own private table to do the evaluation. */        
-        public int valorarNodo(){
-            
-            //int valorNodo= 0;
+        
+        public int valorarNodo(){       
             
             int valorNodoMin = 0;
             int valorNodoMax = 0;
@@ -84,6 +81,14 @@ public class JugadorMaquina extends Jugador{
             int diagonalOffset;
             int valorCasilla;
             
+            if(n_tablero.cuatroEnRaya() == n_jugador){
+                return 10;
+            }
+            else if (n_tablero.cuatroEnRaya() != n_jugador && n_tablero.cuatroEnRaya() != 0){
+                
+                return -1000;
+            }
+                       
             // Check right horizontal
             for (colOffset = 1; colOffset < 4 && n_colPos + colOffset < n_tablero.numColumnas(); colOffset++){
                 valorCasilla = n_tablero.obtenerCasilla(n_rowPos, n_colPos + colOffset);
@@ -92,9 +97,6 @@ public class JugadorMaquina extends Jugador{
                 }
                 else if (valorCasilla == n_jugador){
                     numSelf += 1;
-                }
-                else{
-                    //do nothing;
                 }
                 
                 if (numOpponent >= 3){
@@ -117,16 +119,14 @@ public class JugadorMaquina extends Jugador{
                 else if (valorCasilla == n_jugador){
                     numSelf += 1;
                 }
-                else{
-                    //do nothing;
-                }
                 
-                if (numOpponent >= 3){
-                    return -10;
-                }
                 if (numSelf >= 3){
                     return 10;
                 }
+                if (numOpponent >= 3){
+                    return -10;
+                }
+                
             }
             
             numOpponent = 0;
@@ -141,16 +141,14 @@ public class JugadorMaquina extends Jugador{
                 else if (valorCasilla == n_jugador){
                     numSelf += 1;
                 }
-                else{
-                    //do nothing;
-                }
                 
-                if (numOpponent >= 3){
-                    return -10;
-                }
                 if (numSelf >= 3){
                     return 10;
                 }
+                if (numOpponent >= 3){
+                    return -10;
+                }
+                
             }
             
             numOpponent = 0;
@@ -164,16 +162,14 @@ public class JugadorMaquina extends Jugador{
                 else if (valorCasilla == n_jugador){
                     numSelf += 1;
                 }
-                else{
-                    //do nothing;
-                }
                 
+                if (numSelf >= 3){
+                    return 10;
+                }
                 if (numOpponent >= 3){
                     return -10;
                 }
-                if (numSelf >= 3){
-                    return 10;
-                }                
+                                
             }
             
             numOpponent = 0;
@@ -192,16 +188,14 @@ public class JugadorMaquina extends Jugador{
                 else if (valorCasilla == n_jugador){
                     numSelf += 1;
                 }
-                else{
-                    //do nothing;
-                }
                 
+                if (numSelf >= 3){
+                    return 10;
+                } 
                 if (numOpponent >= 3){
                     return -10;
                 }
-                if (numSelf >= 3){
-                    return 10;
-                }                
+                               
             }
             
             numOpponent = 0;
@@ -220,16 +214,14 @@ public class JugadorMaquina extends Jugador{
                 else if (valorCasilla == n_jugador){
                     numSelf += 1;
                 }
-                else{
-                    //do nothing;
-                }
                 
+                if (numSelf >= 3){
+                    return 10;
+                } 
                 if (numOpponent >= 3){
                     return -10;
                 }
-                if (numSelf >= 3){
-                    return 10;
-                }                
+                               
             }
             numOpponent = 0;
             numSelf = 0;
@@ -251,12 +243,13 @@ public class JugadorMaquina extends Jugador{
                     //do nothing;
                 }
                 
-                if (numOpponent >= 3){
-                    return -10;
-                }
                 if (numSelf >= 3){
                     return 10;
                 }
+                if (numOpponent >= 3){
+                    return -10;
+                }
+                
             }
             
             numOpponent = 0;
@@ -275,16 +268,14 @@ public class JugadorMaquina extends Jugador{
                 else if (valorCasilla == n_jugador){
                     numSelf += 1;
                 }
-                else{
-                    //do nothing;
-                }
                 
-                if (numOpponent >= 3){
-                    return -10;
-                }
                 if (numSelf >= 3){
                     return 10;
                 }                
+                if (numOpponent >= 3){
+                    return -10;
+                }
+                
             }
             
             // Check row above the piece
@@ -322,6 +313,7 @@ public class JugadorMaquina extends Jugador{
                     }
                 }
             }// End row above check
+           
             
             
             // Check row below
@@ -359,6 +351,8 @@ public class JugadorMaquina extends Jugador{
                 }                
             }// End of checking row below
             
+            
+            
             // Check space to the left
             if (n_colPos - 1 > -1){
                 valorCasilla = n_tablero.obtenerCasilla(n_rowPos, n_colPos - 1);
@@ -380,16 +374,13 @@ public class JugadorMaquina extends Jugador{
                     valorNodoMax += 1;
                 }
             }
-            
+
             if ((valorNodoMin * -1) > valorNodoMax){
                 return valorNodoMin;
             }
             else{
                 return valorNodoMax;
             }
-            
-            
-            //return valorNodo;
         }
     }
     
@@ -443,110 +434,8 @@ public class JugadorMaquina extends Jugador{
                 columna = (int) (Math.random()*m_tablero.numColumnas());
     
         }
-     }
-    
-    public int minimax(Nodo n){
-        // Create a vector of nodes for all of the possible moves
-        Nodo listaNodo[] = new Nodo[n.obtenerTablero().numColumnas()];
-        // Create a vector to contain all of the returned values
-        int listaValor[] = new int[n.obtenerTablero().numColumnas()];
-        // Create a copy of the table to be used in the recursion
-        // Make sure to grab a copy of the table from the node passed in.
-        Tablero nueva_copia = new Tablero(n.obtenerTablero());
-        
-        
-        // If the table is full, then we have reached an end state
-        // Similarly if we have reached the desired depth level. 
-        if (nueva_copia.tableroLleno() == true || n.obtenerNivel() <= 0){
-            // evaluate the final node and return its value
-            return n.valorarNodo();
-        }
-        else{
-            // Otherwise for every column of the table 
-            // Generate all of the children
-            for (int i = 0; i < nueva_copia.numColumnas(); i++){
-                // Check each column for an empty row
-                int fila = n.obtenerTablero().comprobarColumna(i);
-                // If the column is full
-                if (fila == -1){
-                    return 0;
-                    //Tablero hijo_tablero = new Tablero(nueva_copia);
-                    // don't know yet
-                }
-                // If not, create a new node
-                else{
-                    // The next level has to be opposite the parent level
-                    // I.E. If the parent is max, the children must be min and vice versa
-                    Tablero hijo_tablero = new Tablero(nueva_copia);
-                    if (n.obtenerNodoTipo().matches("MAX")){
-                        // Create the node
-                        
-                        listaNodo[i] = new Nodo(hijo_tablero, "MIN", n.obtenerJugador(), n.obtenerNivel() - 1);
-                        listaNodo[i].fijarCol(i);
-                        listaNodo[i].fijarFila(fila);
-                        listaNodo[i].obtenerTablero().ponerFicha(listaNodo[i].obtenerCol(), listaNodo[i].obtenerJugador());
-                        // Set the column position and row position
-                        // Place the piece in the table
-                        
-                    }
-                    else if (n.obtenerNodoTipo().matches("MIN")){
-                        listaNodo[i] = new Nodo(hijo_tablero, "MAX", n.obtenerJugador(), n.obtenerNivel() - 1);
-                        listaNodo[i].fijarCol(i);
-                        listaNodo[i].fijarFila(fila);
-                        listaNodo[i].obtenerTablero().ponerFicha(listaNodo[i].obtenerCol(), listaNodo[i].obtenerJugador());
-                    }
-                }// fin sino
-            }//fin para
-            
-            if (n.obtenerNodoTipo().matches("MAX")){
-                // Find the max value from the nodes in the list. 
-                // Busca el valor maximo de los nodos en la lista
-                // Initializar los variables
-                int max = 0;
-                int max_pos = 0;
-                int valorActual = 0;
-                
-                for (int i = 0; i < listaNodo.length; i++){
-                    // Make the recursive call to evaluate the nodes. 
-                    // Hacer la recursion 
-                    valorActual = minimax(listaNodo[i]);
-                    
-                    // Set the maximum value higher if one is found
-                    // Cambia el valor de max si encuentras un mayor
-                    if (valorActual > max){
-                        max = valorActual;
-                        max_pos = i;
-                        m_columna = max_pos;
-                        
-                    }
-                }
-                
-                return max;
-            }// Fin Si
-            else{
-                // Find the minimum value from the nodes in the list
-                // Initializar los variables
-                int min = 0;
-                int min_pos = 0;
-                int valorActual = 0;
-                
-                for (int i = 0; i < listaNodo.length; i++){
-                    // Make the recursive call to get the value
-                    valorActual = minimax(listaNodo[i]);
-                    
-                    // Set the minimum value lower if one is found
-                    // Cambiar el valor de min si encontras un menor
-                    if (valorActual < min){
-                        min = valorActual;
-                        min_pos = i;
-                        m_columna = min_pos;
-                    }
-                }
-                
-                return min;
-            }// fin Else
-        }
     }
+    
     
     /*
     Minimax (N) 
@@ -567,5 +456,172 @@ public class JugadorMaquina extends Jugador{
             its children nodes. 
     
     */
+    
+    public int minimax(Nodo n){
+        // Crea un vector de nodos
+        Nodo listaNodo[] = new Nodo[n.obtenerTablero().numColumnas()];
+        // Y un vector para los valores
+        int listaValor[] = new int[n.obtenerTablero().numColumnas()];
+        // Haz un copia del tablero para la recursión 
+        // Guardar una copia del tablero
+        Tablero nueva_copia = new Tablero(n.obtenerTablero());
+        
+
+        // If the table is full, then we have reached an end state
+        // Similarly if we have reached the desired depth level. 
+        
+        // Si el tablero está lleno, entonces habíamos alcanzado un estado terminal
+        if (nueva_copia.tableroLleno() == true || 
+                n.obtenerNivel() <= 0 || 
+                n.obtenerTablero().cuatroEnRaya() == n.obtenerJugador() || 
+                (n.obtenerTablero().cuatroEnRaya() != n.obtenerJugador() 
+                    && n.obtenerTablero().cuatroEnRaya() != 0)){
+            
+            // Evaluate the final node and return its value
+            // Valorar el nodo final y devolver su valor
+            if (n.obtenerTablero().comprobarColumna(n.obtenerCol()) <= -1){
+                return -1000;
+            }
+            return n.valorarNodo();
+        }
+        else{
+            // Otherwise for every column of the table 
+            // Generate all of the children
+            for (int i = 0; i < nueva_copia.numColumnas(); i++){
+                // Check each column for an empty row
+                int fila = n.obtenerTablero().comprobarColumna(i);
+                // If the column is full
+                // Si la columna está llena
+                if (fila <= -1){
+                    return -1000;
+                }
+                // If not, create a new node
+                // Si no, crea el nodo
+                else{
+                    // The next level has to be opposite the parent level
+                    // I.E. If the parent is max, the children must be min and vice versa
+                    Tablero hijo_tablero = new Tablero(nueva_copia);
+                    if (n.obtenerNodoTipo().matches("MAX")){
+                        // Create the node
+                        
+                        if (n.obtenerJugador() == 1){
+                            listaNodo[i] = new Nodo(hijo_tablero, "MIN", 2, n.obtenerNivel() - 1);
+                            listaNodo[i].fijarCol(i);
+                            listaNodo[i].fijarFila(fila);
+                            listaNodo[i].obtenerTablero().ponerFicha(listaNodo[i].obtenerCol(), listaNodo[i].obtenerJugador());
+                            // Set the column position and row position
+                            // Place the piece in the table
+                        }
+                        else if (n.obtenerJugador() == 2){
+                            listaNodo[i] = new Nodo(hijo_tablero, "MIN", 1, n.obtenerNivel() - 1);
+                            listaNodo[i].fijarCol(i);
+                            listaNodo[i].fijarFila(fila);
+                            listaNodo[i].obtenerTablero().ponerFicha(listaNodo[i].obtenerCol(), listaNodo[i].obtenerJugador());
+                            // Set the column position and row position
+                            // Place the piece in the table
+                        }
+                        
+                        
+                    }
+                    else if (n.obtenerNodoTipo().matches("MIN")){
+                        
+                        if (n.obtenerJugador() == 1){
+                            listaNodo[i] = new Nodo(hijo_tablero, "MAX", 2, n.obtenerNivel() - 1);
+                            listaNodo[i].fijarCol(i);
+                            listaNodo[i].fijarFila(fila);
+                            listaNodo[i].obtenerTablero().ponerFicha(listaNodo[i].obtenerCol(), listaNodo[i].obtenerJugador());
+                            // Set the column position and row position
+                            // Place the piece in the table
+                        }
+                        else if (n.obtenerJugador() == 2){
+                            listaNodo[i] = new Nodo(hijo_tablero, "MAX", 1, n.obtenerNivel() - 1);
+                            // Set the column position and row position
+                            // Fijar las cordinadas de la ficha. 
+                            listaNodo[i].fijarCol(i);
+                            listaNodo[i].fijarFila(fila);
+                            // Pon la ficha en el tablero
+                            // Place the piece in the table
+                            listaNodo[i].obtenerTablero().ponerFicha(listaNodo[i].obtenerCol(), listaNodo[i].obtenerJugador());
+                            
+                            
+                        }
+                    }
+                }// fin sino
+            }//fin para
+            
+            if (n.obtenerNodoTipo().matches("MAX")){
+                // Find the max value from the nodes in the list. 
+                // Busca el valor maximo de los nodos en la lista
+                // Initializar los variables
+                int max = Integer.MIN_VALUE;
+                int valorActual;
+                
+                for (int i = 0; i < listaNodo.length; i++){
+                    // Make the recursive call to evaluate the nodes. 
+                    // Hacer la recursion 
+                    valorActual = minimax(listaNodo[i]);
+                    
+                    // Si la ubicación de la ficha es afuera de el tablero, pasa
+                    if (valorActual < -100){
+                        continue;
+                    }
+                    // Si he ganado por una manera, fijar la posición
+                    if (valorActual >= 10){
+                        max = valorActual;
+                        if (n.obtenerTablero().comprobarColumna(i) > -1){
+                            m_columna = i;
+                        }
+                        break;
+                    }
+                    
+                    // Set the maximum value higher if one is found
+                    // Cambia el valor de max si encuentras un mayor
+                    if (valorActual > max){
+                        max = valorActual;
+                        if (n.obtenerTablero().comprobarColumna(i) > -1){
+                            m_columna = i;
+                        }
+                        
+                    }
+                }
+                return max;
+            }// Fin Si
+            else{
+                // Find the minimum value from the nodes in the list
+                // Buscar para los valores minimos en los nodos en la lista
+                // Initializar los variables
+                int min = Integer.MAX_VALUE;
+                int valorActual;
+                
+                for (int i = 0; i < listaNodo.length; i++){
+                    // Make the recursive call to get the value
+                    valorActual = minimax(listaNodo[i]);
+                    
+                    // Si la ubicación de la ficha es afuera de el tablero, pasa
+                    if (valorActual < -100){
+                        continue;
+                    }
+                    // Si el adversario ha ganado por una manera, necesita bloquear
+                    if (valorActual <= -10){
+                        min = valorActual;
+                        if (n.obtenerTablero().comprobarColumna(i) > -1){
+                            m_columna = i;
+                        }
+                        break;
+                    }
+                    
+                    // Set the minimum value lower if one is found
+                    // Cambiar el valor de min si encontras un menor
+                    if (valorActual < min){
+                        min = valorActual;
+                        if (n.obtenerTablero().comprobarColumna(i) > -1){
+                            m_columna = i;
+                        }
+                    }
+                }
+                return min;
+            }// fin Else
+        }
+    }
 }
 
