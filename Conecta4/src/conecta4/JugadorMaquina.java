@@ -8,9 +8,9 @@ package conecta4;
 /**
  *
  * @author sistemas inteligentes
+ * @author Matthew Quintana
  */
 public class JugadorMaquina extends Jugador{
-
     //Profundidad hasta la que se va a desarrollar el Ã¡rbol de juego
     public final static int NIVEL_DEFECTO = 2;
     private Nodo root;
@@ -67,8 +67,18 @@ public class JugadorMaquina extends Jugador{
         public Tablero obtenerTablero(){
             return n_tablero;
         }
-
         
+        /**
+         * Función de evaluación 
+         * 
+         * La función devuelve un valor sobre el estado del juego con la 
+         * información dentro del nodo. 
+         * 
+         * La función compraba las casillas cerca de una posición para determinar
+         * el valor de poner una ficha allí. Compraba las filas y las columnas para 
+         * ver si hay tres en una raya y también para contar el número de
+         * fichas propias y oponentes. 
+         */
         public int valorarNodo(){       
             
             int valorNodoMin = 0;
@@ -81,15 +91,19 @@ public class JugadorMaquina extends Jugador{
             int diagonalOffset;
             int valorCasilla;
             
+            // Si he ganado, devuelve un valor 
             if(n_tablero.cuatroEnRaya() == n_jugador){
-                return 10;
+                m_columna = n_colPos;
+                return 1000;
             }
-            else if (n_tablero.cuatroEnRaya() != n_jugador && n_tablero.cuatroEnRaya() != 0){
-                
-                return -1000;
+            // Si el oponente ha ganado por una manera, evita el jugada que 
+            // hizo este estado. 
+            else if (n_tablero.cuatroEnRaya() != 0){
+                return -300;
             }
                        
             // Check right horizontal
+            // Comprobar los tres espacios a la derecha
             for (colOffset = 1; colOffset < 4 && n_colPos + colOffset < n_tablero.numColumnas(); colOffset++){
                 valorCasilla = n_tablero.obtenerCasilla(n_rowPos, n_colPos + colOffset);
                 if (valorCasilla != n_jugador && valorCasilla != 0){
@@ -111,6 +125,7 @@ public class JugadorMaquina extends Jugador{
             numSelf = 0;
             
             // Check left horizontal
+            // Comproba los tres espacios a la izquierda 
             for (colOffset = -1; colOffset > -4 && (n_colPos + colOffset) > -1; colOffset--){
                 valorCasilla = n_tablero.obtenerCasilla(n_rowPos, n_colPos + colOffset);
                 if (valorCasilla != n_jugador && valorCasilla != 0){
@@ -133,6 +148,7 @@ public class JugadorMaquina extends Jugador{
             numSelf = 0;
             
             // Check for lower vertical
+            // Comproba los tres espacios de debajo
             for (rowOffset = 1; rowOffset < 4 && (n_rowPos + rowOffset) < n_tablero.numFilas(); rowOffset++){
                 valorCasilla = n_tablero.obtenerCasilla(n_rowPos + rowOffset, n_colPos);
                 if (valorCasilla != n_jugador && valorCasilla != 0){
@@ -154,6 +170,7 @@ public class JugadorMaquina extends Jugador{
             numOpponent = 0;
             numSelf = 0;
             // Check for higher vertical
+            // Comproba los tres espacios arriba de la ficha
             for (rowOffset = -1; rowOffset > -4 && (n_rowPos + rowOffset) > -1; rowOffset--){
                 valorCasilla = n_tablero.obtenerCasilla(n_rowPos + rowOffset, n_colPos);
                 if (valorCasilla != n_jugador && valorCasilla != 0){
@@ -176,6 +193,7 @@ public class JugadorMaquina extends Jugador{
             numSelf = 0;
             
             // Check upper left diagonal
+            // Comproba la diagonal a la izquierda y arriba
             for (diagonalOffset = -1; (diagonalOffset > -4) && 
                     (n_rowPos + diagonalOffset > -1) && 
                     (n_colPos + diagonalOffset > -1); 
@@ -202,6 +220,7 @@ public class JugadorMaquina extends Jugador{
             numSelf = 0;
             
             // Check lower right diagonal
+            // Comproba la diagonal de debajo y de la derecha 
             for (diagonalOffset = 1; (diagonalOffset < 4) && 
                     (n_rowPos + diagonalOffset < n_tablero.numFilas()) && 
                     (n_colPos + diagonalOffset < n_tablero.numColumnas()); 
@@ -227,6 +246,7 @@ public class JugadorMaquina extends Jugador{
             numSelf = 0;
             
             // Upper right diagonal
+            // Comproba la diagonal arriba y de la derecha
             for (diagonalOffset = 1; (diagonalOffset < 4) && 
                     (n_rowPos - diagonalOffset > -1) &&
                     (n_colPos + diagonalOffset < n_tablero.numColumnas());
@@ -238,9 +258,6 @@ public class JugadorMaquina extends Jugador{
                 }
                 else if (valorCasilla == n_jugador){
                     numSelf += 1;
-                }
-                else{
-                    //do nothing;
                 }
                 
                 if (numSelf >= 3){
@@ -256,6 +273,7 @@ public class JugadorMaquina extends Jugador{
             numSelf = 0;
             
             // Lower left diagonal
+            // Comproba la diagonal de debajo y a la izquierda
             for (diagonalOffset = 1; (diagonalOffset < 4) &&
                     (n_rowPos + diagonalOffset < n_tablero.numFilas() &&
                     (n_colPos - diagonalOffset > -1));
@@ -275,13 +293,14 @@ public class JugadorMaquina extends Jugador{
                 if (numOpponent >= 3){
                     return -10;
                 }
-                
             }
             
             // Check row above the piece
+            // Comproba la fila arriba
             if (n_rowPos - 1 > -1){
                 
                 // Space above the piece
+                // El espacio arriba 
                 valorCasilla = n_tablero.obtenerCasilla(n_rowPos - 1, n_colPos);
                 if ((valorCasilla != n_jugador) && (valorCasilla != 0)){
                     valorNodoMin -= 1;
@@ -291,6 +310,7 @@ public class JugadorMaquina extends Jugador{
                 }
                 
                 // Upper Left
+                // El espacio arriba y izquierda
                 if (n_colPos - 1 > -1){
                     valorCasilla = n_tablero.obtenerCasilla(n_rowPos - 1, n_colPos - 1);
                     if ((valorCasilla != n_jugador) && (valorCasilla != 0)){
@@ -303,6 +323,7 @@ public class JugadorMaquina extends Jugador{
                 }
                 
                 // Upper right
+                // El espacio arriba y a la derecha 
                 if (n_colPos + 1 < n_tablero.numColumnas()){
                     valorCasilla = n_tablero.obtenerCasilla(n_rowPos - 1, n_colPos + 1);
                     if ((valorCasilla != n_jugador) && (valorCasilla != 0)){
@@ -317,9 +338,11 @@ public class JugadorMaquina extends Jugador{
             
             
             // Check row below
+            // Comproba la fila de debajo
             if (n_rowPos + 1 < n_tablero.numFilas()){
                 
                 // Check space below
+                // El espacio de debajo
                 valorCasilla = n_tablero.obtenerCasilla(n_rowPos + 1, n_colPos);
                 if ((valorCasilla != n_jugador) && (valorCasilla != 0)){
                     valorNodoMin -= 1;
@@ -329,6 +352,7 @@ public class JugadorMaquina extends Jugador{
                 }
                 
                 // Check the lower left
+                // El espacio de debajo y izquierda
                 if (n_colPos - 1 > -1){
                     valorCasilla = n_tablero.obtenerCasilla(n_rowPos + 1, n_colPos - 1);
                     if ((valorCasilla != n_jugador) && (valorCasilla != 0)){
@@ -339,7 +363,8 @@ public class JugadorMaquina extends Jugador{
                     }
                 }
                 
-                // Check the lower right                
+                // Check the lower right 
+                // El espacio de debajo y derecha
                 if (n_colPos + 1 < n_tablero.numColumnas()){
                     valorCasilla = n_tablero.obtenerCasilla(n_rowPos + 1, n_colPos + 1);
                     if ((valorCasilla != n_jugador) && (valorCasilla != 0)){
@@ -354,6 +379,7 @@ public class JugadorMaquina extends Jugador{
             
             
             // Check space to the left
+            // Comproba el espacio a la izquierda
             if (n_colPos - 1 > -1){
                 valorCasilla = n_tablero.obtenerCasilla(n_rowPos, n_colPos - 1);
                 if ((valorCasilla != n_jugador) && (valorCasilla != 0)){
@@ -365,6 +391,7 @@ public class JugadorMaquina extends Jugador{
             }
             
             // Check the space to the right
+            // Comproba el espacio a la derecha 
             if (n_colPos + 1 < n_tablero.numColumnas()){
                 valorCasilla = n_tablero.obtenerCasilla(n_rowPos, n_colPos + 1);
                 if ((valorCasilla != n_jugador) && (valorCasilla != 0)){
@@ -374,7 +401,8 @@ public class JugadorMaquina extends Jugador{
                     valorNodoMax += 1;
                 }
             }
-
+            
+            // Determinar si un jugada maximo o minimo es más importante 
             if ((valorNodoMin * -1) > valorNodoMax){
                 return valorNodoMin;
             }
@@ -392,15 +420,11 @@ public class JugadorMaquina extends Jugador{
         
     }
 
-    // FunciÃ³n que se ejecuta en el thread
+    // Función que se ejecuta en el thread
     public void run()
-    {
-        root = new Nodo(m_tablero, "MAX", m_jugador, NIVEL_DEFECTO);
-        //Llama a la funciÃ³n Minimax que implementa el algoritmo para calcular la jugada
-        //minimax();
-        
-        minimax(root);
-        // Call this with the nivel por defecto and then decrement in each call. 
+    {       
+        //Llama a la función Minimax que implementa el algoritmo para calcular la jugada
+        minimax();            
         
         //No borrar esta lÃ­nea!!
         isDone(true);
@@ -416,25 +440,13 @@ public class JugadorMaquina extends Jugador{
     public void minimax()
     {
 
-        //El siguiente cÃ³digo genera una jugada aleatoria
-        //SE DEBE SUSTITUIR ESTE CÃ“DIGO POR EL DEL ALGORITMO Minimax
-        boolean buenaTirada = false;
-        int columna = -1;
-
-        columna = (int) (Math.random()*m_tablero.numColumnas());
-
-        while(!buenaTirada)
-        {
-            if(m_tablero.comprobarColumna(columna)!=-1)
-            {
-                buenaTirada = true;
-                m_columna = columna;
-            }
-            else
-                columna = (int) (Math.random()*m_tablero.numColumnas());
-    
-        }
+        //El siguiente código genera una jugada aleatoria
+        //SE DEBE SUSTITUIR ESTE CÓDIGO POR EL DEL ALGORITMO Minimax
+        root = new Nodo(m_tablero, "MAX", m_jugador, NIVEL_DEFECTO);
+        // Call this with the nivel por defecto and then decrement in each call. 
+        minimax(root);
     }
+    
     
     
     /*
@@ -455,8 +467,7 @@ public class JugadorMaquina extends Jugador{
         if N is a MIN node, then return the minimum value evaluated from 
             its children nodes. 
     
-    */
-    
+    */  
     public int minimax(Nodo n){
         // Crea un vector de nodos
         Nodo listaNodo[] = new Nodo[n.obtenerTablero().numColumnas()];
@@ -505,7 +516,7 @@ public class JugadorMaquina extends Jugador{
                         // Create the node
                         
                         if (n.obtenerJugador() == 1){
-                            listaNodo[i] = new Nodo(hijo_tablero, "MIN", 2, n.obtenerNivel() - 1);
+                            listaNodo[i] = new Nodo(hijo_tablero, "MIN", 1, n.obtenerNivel() - 1);
                             listaNodo[i].fijarCol(i);
                             listaNodo[i].fijarFila(fila);
                             listaNodo[i].obtenerTablero().ponerFicha(listaNodo[i].obtenerCol(), listaNodo[i].obtenerJugador());
@@ -513,7 +524,7 @@ public class JugadorMaquina extends Jugador{
                             // Place the piece in the table
                         }
                         else if (n.obtenerJugador() == 2){
-                            listaNodo[i] = new Nodo(hijo_tablero, "MIN", 1, n.obtenerNivel() - 1);
+                            listaNodo[i] = new Nodo(hijo_tablero, "MIN", 2, n.obtenerNivel() - 1);
                             listaNodo[i].fijarCol(i);
                             listaNodo[i].fijarFila(fila);
                             listaNodo[i].obtenerTablero().ponerFicha(listaNodo[i].obtenerCol(), listaNodo[i].obtenerJugador());
@@ -561,9 +572,18 @@ public class JugadorMaquina extends Jugador{
                     // Hacer la recursion 
                     valorActual = minimax(listaNodo[i]);
                     
+                    if (valorActual >= 100){
+                        valorActual = max;
+                        break;
+                    }
                     // Si la ubicación de la ficha es afuera de el tablero, pasa
-                    if (valorActual < -100){
+                    if (valorActual < -500){
                         continue;
+                    }
+                    if (valorActual < -150){
+                        m_columna = i;
+                        max = valorActual;
+                        break;
                     }
                     // Si he ganado por una manera, fijar la posición
                     if (valorActual >= 10){
@@ -597,10 +617,20 @@ public class JugadorMaquina extends Jugador{
                     // Make the recursive call to get the value
                     valorActual = minimax(listaNodo[i]);
                     
+                    if (valorActual >= 10){
+                        min = valorActual;
+                        break;
+                    }
                     // Si la ubicación de la ficha es afuera de el tablero, pasa
-                    if (valorActual < -100){
+                    if (valorActual < -500){
                         continue;
                     }
+                    /*
+                    if (valorActual < -150){
+                        m_columna = i;
+                        min = valorActual;
+                        break;
+                    }*/
                     // Si el adversario ha ganado por una manera, necesita bloquear
                     if (valorActual <= -10){
                         min = valorActual;
